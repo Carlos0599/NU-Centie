@@ -72,7 +72,7 @@ function Exhibits() {
 
   const [show4, setShow4] = useState(false);
 
-  const handleClose1 = () => setShow(false);w
+  const handleClose1 = () => setShow(false);
   const handleShow1 = () => setShow(true);
 
   const handleClose2 = () => setShow1(false);
