@@ -1,28 +1,98 @@
 import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { Col, Form, Row, Button, Modal } from "react-bootstrap";
+import { Col, Form, Row, Button, Modal, FloatingLabel } from "react-bootstrap";
 import SideNavBar from "./SideNavBar";
 import MaterialTable from "material-table";
 import Menu from "@mui/material/Menu";
 import { styled, alpha } from "@mui/material/styles";
 import Axios from "axios";
-import { Link, NavLink } from "react-router-dom";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Avatar,
-  Grid,
-  Typography,
-  TablePagination,
-  TableFooter,
-} from "@material-ui/core";
+import ArchiveIcon from '@mui/icons-material/Archive';
 import { makeStyles } from "@material-ui/core/styles";
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import MenuItem from '@mui/material/MenuItem';
+import EditIcon from '@mui/icons-material/Edit';
+import FileCopyIcon from '@mui/icons-material/FileCopy';
 
+
+import Box from '@mui/material/Box';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import PropTypes from 'prop-types';
+import Typography from '@mui/material/Typography';
+
+function TabPanel(props) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box sx={{ p: 3 }}>
+          <Typography>{children}</Typography>
+        </Box>
+      )}
+    </div>
+  );
+}
+
+TabPanel.propTypes = {
+  children: PropTypes.node,
+  index: PropTypes.number.isRequired,
+  value: PropTypes.number.isRequired,
+};
+
+function a11yProps(index) {
+  return {
+    id: `simple-tab-${index}`,
+    'aria-controls': `simple-tabpanel-${index}`,
+  };
+}
+
+const StyledMenu = styled((props) => (
+  <Menu
+    elevation={0}
+    anchorOrigin={{
+      vertical: 'bottom',
+      horizontal: 'left',
+    }}
+    transformOrigin={{
+      vertical: 'top',
+      horizontal: 'left',
+    }}
+    {...props}
+  />
+))(({ theme }) => ({
+  '& .MuiPaper-root': {
+    borderRadius: 6,
+    marginTop: theme.spacing(1),
+    minWidth: 180,
+    color:
+      theme.palette.mode === 'light' ? 'rgb(55, 65, 81)' : theme.palette.grey[300],
+    boxShadow:
+      'rgb(255, 255, 255) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px',
+    '& .MuiMenu-list': {
+      padding: '4px 0',
+    },
+    '& .MuiMenuItem-root': {
+      '& .MuiSvgIcon-root': {
+        fontSize: 18,
+        color: theme.palette.text.secondary,
+        marginRight: theme.spacing(1.5),
+      },
+      '&:active': {
+        backgroundColor: alpha(
+          theme.palette.primary.main,
+          theme.palette.action.selectedOpacity,
+        ),
+      },
+    },
+  },
+}));
 function MyVerticallyCenteredModal(props) {
   const [validated, setValidated] = useState(false);
 
@@ -60,13 +130,11 @@ function MyVerticallyCenteredModal(props) {
 }
 
 function Users() {
-  const [user_id, setUserId] = useState("");
-  const [user_fname, setUserFName] = useState("");
-  const [user_lname, setUserLName] = useState("");
-  const [user_email, setUserEmail] = useState("");
-  const [user_contact, setUserContact] = useState("");
-  const [user_address, setUserAddress] = useState("");
-  const [userlists, setUserLists] = useState("");
+  const [value, setValue] = React.useState(0);
+
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
 
   const StyledMenu = styled((props) => (
     <Menu
@@ -155,31 +223,24 @@ function Users() {
     },
   }));
 
-  const classes = useStyles();
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  
 
-  const [search, setSearch] = useState("");
+  // refresh table
+  function refreshTable(){
+    Axios.get("http://localhost:3003/api/getUsers")
+    .then((res) => {
+      console.log(res);
+      setuserslist(res.data);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  }
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
-  };
-
-  //  useEffect(() => {
-  //     Axios.get('http://localhost:5000/api/getUsers').then((response) => {
-  //       setUserLists(response.data);
-  //       console.log(response.data);
-  //     })
-  //  }, [])
-
+//  get users
   const [userslist, setuserslist] = useState([]);
   useEffect(() => {
-    Axios.get("http://localhost:5000/api/getUsers")
+    Axios.get("http://localhost:3003/api/getUsers")
       .then((res) => {
         console.log(res);
         setuserslist(res.data);
@@ -188,40 +249,266 @@ function Users() {
         console.log(err);
       });
   }, []);
-  const usersdata = userslist
-    .filter((obj) => {
-      if (search == "") {
-        return obj;
-      } else if (obj.user_fname.toLowerCase().includes(search.toLowerCase())) {
-        return obj;
-      }
-    })
-    .map((obj) => {
-      return (
-        <tr>
-          <td>{obj.user_id}</td>
-          <td>{obj.user_fname}</td>
-          <td>{obj.user_lname}</td>
-          <td>{obj.user_email}</td>
-          <td>{obj.user_contact}</td>
-          <td>{obj.user_address}</td>
+  
 
-          <td>
-            <a
-              href="#"
-              className="settings"
-              title="Settings"
-              data-toggle="tooltip"
-            >
-              <i className="material-icons">&#xE8B8;</i>
-            </a>
-          </td>
-        </tr>
-      );
-    });
+
+
+  // Delete Controller 
+  const [showDelete, setShowDelete] = useState(false);
+
+  const handleCloseDelete = () => setShowDelete(false);
+  const handleShowDelete = () => setShowDelete(true);
+
+  const [user_id, setuser_id] = useState();
+
+  function deleteUser(){
+    Axios.put('http://localhost:3003/api/user/archived',{
+      user_id : user_id
+    }).then((response) => {
+      console.log(response.status);
+      refreshTable();
+      handleCloseDelete();
+    })
+    .catch((err) => {
+      console.error(err);
+    })
+  }
+
+
+   // Update modal confirmation
+   const [showUpdateConfirmation, setShowUpdateConfirmation] = useState(false);
+   const handleCloseUpdateConfirmation = () => setShowUpdateConfirmation(false);
+   const handleShowUpdateConfirmation = () => setShowUpdateConfirmation(true);
+
+   function updateConfirmationModal(e){
+    const form = e.currentTarget;
+    if (form.checkValidity() === false) {
+      e.preventDefault();
+      e.stopPropagation();
+    } else {
+      e.preventDefault();
+      handleShowUpdateConfirmation();
+      handleCloseUpdate();
+    }
+    setvalidate(true);
+   }
+
+    // Update Controller 
+    const [showUpdate, setShowUpdate] = useState(false);
+    const handleCloseUpdate = () => setShowUpdate(false);
+    const handleShowUpdate = () => setShowUpdate(true);
+
+    const [validate, setvalidate] = useState(false);
+    const [user_fname, setUserFName] = useState("");
+    const [user_lname, setUserLName] = useState("");
+    const [user_email, setUserEmail] = useState("");
+    const [user_contact, setUserContact] = useState("");
+    const [user_address, setUserAddress] = useState("");
+
+
+    function updateUser(){
+      Axios.put('http://localhost:3003/api/user/update',{
+      user_id : user_id,
+      user_fname: user_fname,
+      user_lname : user_lname,
+      user_address : user_address
+    }).then((response) => {
+      console.log(response.status);
+      refreshTable();
+      handleCloseUpdateConfirmation();
+    })
+    .catch((err) => {
+      console.error(err);
+    })
+    }
+    
+
 
   return (
     <div style={{ marginTop: 100 }}>
+
+      {/* Modal Delete */}
+      <Modal
+        show={showDelete}
+        onHide={handleCloseDelete}
+        backdrop="static"
+        keyboard={false}
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Warning</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+         Are you sure you want to delete this user ?
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseDelete}>
+            Close
+          </Button>
+          <Button variant="primary" 
+          onClick={
+            (e) =>{
+              e.preventDefault();
+              deleteUser();
+            }
+            }
+            >Understood</Button>
+        </Modal.Footer>
+      </Modal>
+
+
+      {/* Modal Update Confirmation */}
+      <Modal
+        show={showUpdateConfirmation}
+        onHide={handleCloseUpdateConfirmation}
+        backdrop="static"
+        keyboard={false}
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Warning</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+         Are you sure you want to update this user ?
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={(e)=>{
+            handleCloseUpdateConfirmation();
+            handleShowUpdate();
+          }}>
+            Close
+          </Button>
+          <Button variant="primary" 
+          onClick={
+            (e) =>{
+              e.preventDefault();
+              updateUser();
+            }
+            }
+            >Understood</Button>
+        </Modal.Footer>
+      </Modal>
+
+
+     {/* Modal Update */}
+      <Modal
+        show={showUpdate}
+        onHide={handleCloseUpdate}
+        backdrop="static"
+        keyboard={false}
+        centered
+      >
+        <Row>
+        <Form noValidate validated={validate} onSubmit={updateConfirmationModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Update User</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+
+
+        <Form.Group controlId="firstName" className="mb-3">
+        <FloatingLabel
+          controlId="floatingInput"
+           label="First Name"
+          >
+             <Form.Control type="text" value={user_fname}
+             minLength={3}
+             maxLength={20}
+             required
+             onChange={(e) =>{
+               setUserFName(e.target.value);
+             }} />
+             <Form.Control.Feedback type="invalid">
+              This field is required.
+            </Form.Control.Feedback>
+           </FloatingLabel>
+         </Form.Group>
+
+
+           
+        <Form.Group controlId="lastName" className="mb-3">
+        <FloatingLabel
+          controlId="floatingInput"
+           label="Last Name"
+          >
+             <Form.Control type="text" value={user_lname}
+             minLength={3}
+             maxLength={20}
+             required
+             onChange={(e) =>{
+               setUserLName(e.target.value);
+             }} />
+             <Form.Control.Feedback type="invalid">
+              This field is required.
+            </Form.Control.Feedback>
+           </FloatingLabel>
+         </Form.Group>
+
+
+         <Form.Group controlId="email" className="mb-3">
+        <FloatingLabel
+          controlId="floatingInput"
+           label="email"
+          >
+             <Form.Control type="text" value={user_email}
+             disabled={true}
+              />
+           </FloatingLabel>
+         </Form.Group>
+
+
+         <Form.Group controlId="Contact Number" className="mb-3">
+        <FloatingLabel
+          controlId="floatingInput"
+           label="Contact Number"
+          >
+             <Form.Control type="text" value={user_contact}
+             disabled={true}
+              />
+           </FloatingLabel>
+         </Form.Group>
+
+
+   
+         <Form.Group controlId="address" className="mb-3">
+        <FloatingLabel
+          controlId="floatingInput"
+           label="Address"
+          >
+             <Form.Control
+         as="textarea"
+         placeholder="address"
+         style={{ height: '100px' }}
+         value={user_address}
+         minLength={5}
+         maxLength={70}
+         required
+         onChange={(e) =>{
+           setUserAddress(e.target.value);
+         }} 
+
+    />
+             <Form.Control.Feedback type="invalid">
+              This field is required.
+            </Form.Control.Feedback>
+           </FloatingLabel>
+         </Form.Group>
+
+
+
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseUpdate}>
+            Close
+          </Button>
+          <Button variant="primary" type='submit'
+            >Save Changes</Button>
+        </Modal.Footer>
+        </Form>
+        </Row>
+      </Modal>
+
+
       <MyVerticallyCenteredModal
         show={modalShow}
         onHide={() => setModalShow(false)}
@@ -231,166 +518,183 @@ function Users() {
           <SideNavBar active={"users"} />
         </Col>
         <Col sm={10}>
-          <main>
-            <div
-              className="form-inputs"
-              style={{
-                height: "10px",
-                width: "500px",
-                marginTop: "1%",
-                marginBottom: "4%",
-                marginLeft: "46%",
-              }}
-            >
-              <input
-                className="form-control"
-                type="text"
-                name="notifyaddress"
-                placeholder="Search"
-                onChange={(event) => {
-                  setSearch(event.target.value);
+        <Row>
+            <div style={{ padding: 10, color: '#30408D' }}>
+              <h1>Users</h1>
+            </div>
+          </Row>
+          <Box sx={{ width: '100%' }}>
+          <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+              <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
+                <Tab label="Users" {...a11yProps(0)} />
+                <Tab label="Archive Users" {...a11yProps(1)} />
+              </Tabs>
+            </Box>
+            <TabPanel value={value} index={0}>
+
+            <MaterialTable
+                title=""
+                columns={[
+                  { title: 'User ID', field: 'user_id', defaultSort: "asc", },
+                  { title: 'First Name', field: 'user_fname' },
+                  { title: 'Last Name', field: 'user_lname' },
+                  { title: 'Email', field: 'user_email' },
+                  { title: 'Contact Number', field: 'user_contact' },
+                  { title: 'Address', field: 'user_address' },
+                  { title: 'Created Date', field: 'dateCreated' },
+                  {
+                    title: 'Actions',
+                    sorting: true,
+                    render: (row) => <div style={{ cursor: 'pointer' }}>
+
+                      <MoreHorizIcon onClick={(e) => {
+                         e.preventDefault();
+                        setuser_id(row.user_id);
+                        setUserFName(row.user_fname);
+                        setUserLName(row.user_lname);
+                        setUserEmail(row.user_email);
+                        setUserContact(row.user_contact);
+                        setUserAddress(row.user_address);
+                        handleClick(e);
+                        }
+                        } />
+                      <StyledMenu
+                        id="demo-customized-menu"
+                        MenuListProps={{
+                          'aria-labelledby': 'demo-customized-button',
+                        }}
+                        anchorEl={anchorEl}
+                        open={open}
+                        onClose={handleClose}
+                      >
+                        <MenuItem onClick={() => {
+                          handleClose();
+                          handleShowUpdate();
+                        }} disableRipple>
+                          <EditIcon />
+                          <strong> Edit </strong>
+                        </MenuItem>
+                        <MenuItem onClick={() => {
+                          handleClose();                        
+                          handleShowDelete();
+                        }} disableRipple>
+                          <FileCopyIcon style={{ color: 'red' }} />
+                          <strong style={{ color: 'red', marginTop: 5 }}>Archive</strong>
+                        </MenuItem>
+                      </StyledMenu>
+
+                    </div>
+                  }
+
+                ]}
+                actions={[
+                  // {
+                  //   icon: 'add',
+                  //   tooltip: 'Add Subscriber',
+                  //   isFreeAction: true,
+                  //   onClick: (event, rowData) => {
+                  //     setModalShow(true);
+                  //   }
+                  // },
+                  {
+                    icon: ArchiveIcon,
+                    tooltip: 'View Archive',
+                    isFreeAction: true,
+                    onClick: (event) => alert("You want to add a new row")
+                  }
+                ]}
+                // data={userslist}
+                data={[
+                  { user_id: '101', user_fname: 'johno', user_lname: 'bob', user_email: 'johnobob@gmail.com', user_contact: '12345', user_address:'Tondo', dateCreated: '19/11/21' },
+                ]}
+                options={{
+                  sorting: true,
+                  search: true,
                 }}
               />
-            </div>
-            <TableContainer
-              component={Paper}
-              className={classes.tableContainer}
-            >
-              <Table className={classes.table} aria-label="simple table">
-                <TableHead>
-                  <TableRow>
-                    <TableCell className={classes.tableHeaderCell}>
-                      User ID
-                    </TableCell>
-                    <TableCell className={classes.tableHeaderCell}>
-                      First Name
-                    </TableCell>
-                    <TableCell className={classes.tableHeaderCell}>
-                      Last Name
-                    </TableCell>
-                    <TableCell className={classes.tableHeaderCell}>
-                      Email
-                    </TableCell>
-                    <TableCell className={classes.tableHeaderCell}>
-                      Contact Number
-                    </TableCell>
-                    <TableCell className={classes.tableHeaderCell}>
-                      Address
-                    </TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {userslist
-                    .filter((obj) => {
-                      if (search == "") {
-                        return obj;
-                      } else if (
-                        obj.user_id
-                          .toLowerCase()
-                          .includes(search.toLowerCase()) ||
-                        obj.user_fname
-                          .toLowerCase()
-                          .includes(search.toLowerCase()) ||
-                        obj.user_lname
-                          .toLowerCase()
-                          .includes(search.toLowerCase())
-                      ) {
-                        return obj;
-                      }
-                    })
-                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map((obj) => (
-                      <TableRow>
-                        <TableCell>
-                          <Grid container>
-                            <Grid item lg={2}>
-                              <Avatar
-                                alt={obj.user_Id}
-                                src="."
-                                className={classes.avatar}
-                              />
-                            </Grid>
-                            <Grid item lg={10}>
-                              <Typography color="textSecondary" variant="body2">
-                                {obj.user_id}
-                              </Typography>
-                            </Grid>
-                          </Grid>
-                        </TableCell>
-                        <TableCell>
-                          <Link to="/" style={{ textDecoration: "none" }}>
-                            {" "}
-                            <Typography className={classes.name}>
-                              {obj.user_fname}
-                            </Typography>{" "}
-                          </Link>
-                          {/* <Typography color="textSecondary" variant="body2">{obj.lastname}</Typography> */}
-                        </TableCell>
-                        <TableCell>
-                          <Link to="/" style={{ textDecoration: "none" }}>
-                            {" "}
-                            <Typography className={classes.name}>
-                              {obj.user_lname}
-                            </Typography>{" "}
-                          </Link>
-                        </TableCell>
+              </TabPanel>
 
-                        <TableCell>
-                          <Typography color="primary" variant="subtitle2">
-                            {obj.user_email}
-                          </Typography>
-                        </TableCell>
-                        <TableCell>
-                          <Typography color="primary" variant="subtitle2">
-                            {obj.user_contact}
-                          </Typography>
-                        </TableCell>
-                        <TableCell>
-                          <Typography color="primary" variant="subtitle2">
-                            {obj.user_address}
-                          </Typography>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                </TableBody>
-                <TableFooter>
-                  <TablePagination
-                    style={{ width: "400px" }}
-                    rowsPerPageOptions={[5, 10, 15]}
-                    component="div"
-                    count={usersdata.length}
-                    rowsPerPage={rowsPerPage}
-                    page={page}
-                    onChangePage={handleChangePage}
-                    onChangeRowsPerPage={handleChangeRowsPerPage}
-                  />
-                </TableFooter>
-              </Table>
-            </TableContainer>
-            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"></script>
-            <script src="assets/libs/jquery/dist/jquery.min.js"></script>
+              <TabPanel value={value} index={1}>
 
-            <script src="assets/libs/popper.js/dist/umd/popper.min.js"></script>
-            <script src="assets/libs/bootstrap/dist/js/bootstrap.min.js"></script>
+            <MaterialTable
+                title=""
+                columns={[
+                  { title: 'User ID', field: 'user_id', defaultSort: "asc", },
+                  { title: 'First Name', field: 'user_fname' },
+                  { title: 'Last Name', field: 'user_lname' },
+                  { title: 'Email', field: 'user_email' },
+                  { title: 'Contact Number', field: 'user_contact' },
+                  { title: 'Address', field: 'user_address' },
+                  { title: 'Created Date', field: 'dateCreated' },
+                  {
+                    title: 'Actions',
+                    sorting: true,
+                    render: (row) => <div style={{ cursor: 'pointer' }}>
 
-            <script src="assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js"></script>
-            <script src="assets/extra-libs/sparkline/sparkline.js"></script>
+                      <MoreHorizIcon onClick={(e) => {
+                         e.preventDefault();
+                        setuser_id(row.user_id);
+                        setUserFName(row.user_fname);
+                        setUserLName(row.user_lname);
+                        setUserEmail(row.user_email);
+                        setUserContact(row.user_contact);
+                        setUserAddress(row.user_address);
+                        handleClick(e);
+                        }
+                        } />
+                      <StyledMenu
+                        id="demo-customized-menu"
+                        MenuListProps={{
+                          'aria-labelledby': 'demo-customized-button',
+                        }}
+                        anchorEl={anchorEl}
+                        open={open}
+                        onClose={handleClose}
+                      >
+                        <MenuItem onClick={() => {
+                          handleClose();
+                          handleShowUpdate();
+                        }} disableRipple>
+                          <EditIcon />
+                          <strong> Edit </strong>
+                        </MenuItem>
+                        <MenuItem onClick={() => {
+                          handleClose();                        
+                          handleShowDelete();
+                        }} disableRipple>
+                          <FileCopyIcon style={{ color: 'red' }} />
+                          <strong style={{ color: 'red', marginTop: 5 }}>Archive</strong>
+                        </MenuItem>
+                      </StyledMenu>
 
-            <script src="dist/js/waves.js"></script>
+                    </div>
+                  }
 
-            <script src="dist/js/sidebarmenu.js"></script>
-
-            <script src="dist/js/custom.min.js"></script>
-
-            <script src="assets/extra-libs/multicheck/datatable-checkbox-init.js"></script>
-            <script src="assets/extra-libs/multicheck/jquery.multicheck.js"></script>
-            <script src="assets/extra-libs/DataTables/datatables.min.js"></script>
-            <script>
-              /**************************************** * Basic Table *
-              ****************************************/
-              $('#zero_config').DataTable();
-            </script>
-          </main>
+                ]}
+                actions={[
+                  // {
+                  //   icon: 'add',
+                  //   tooltip: 'Add Subscriber',
+                  //   isFreeAction: true,
+                  //   onClick: (event, rowData) => {
+                  //     setModalShow(true);
+                  //   }
+                  // },
+                  {
+                    icon: ArchiveIcon,
+                    tooltip: 'View Archive',
+                    isFreeAction: true,
+                    onClick: (event) => alert("You want to add a new row")
+                  }
+                ]}
+                // data={userslist}
+                options={{
+                  sorting: true,
+                  search: true,
+                }}
+              />
+              </TabPanel>
+              </Box>
         </Col>
       </Row>
     </div>

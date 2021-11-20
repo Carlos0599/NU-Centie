@@ -5,6 +5,7 @@ import App from "./App";
 import "./scss/Root.scss";
 import AOS from "aos";
 import reportWebVitals from "./reportWebVitals";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 AOS.init();
 ReactDOM.render(

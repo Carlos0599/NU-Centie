@@ -7,6 +7,8 @@ import {
 
 import NavBar from "./NavbarFooter/NavBar";
 import Footer from "./NavbarFooter/Footer";
+
+
 import { lazy, Suspense } from "react";
 import ViewStory from "./innovator_components/SeeMore/ViewStory";
 const Payment = lazy(() =>
@@ -39,22 +41,30 @@ const Library = lazy(() => import("./pages/Library/Library"));
 const LibraryView = lazy(() => import("./pages/Library/ViewLibrary"));
 const ContactUs = lazy(() => import("./ContactUs/ContactUs"));
 const PrivacyPolicy = lazy(() => import("./PrivacyPolicy/PrivacyPolicy"));
+const Login = lazy(() => import("./Login/Login"));
 
 const MainAdmin = lazy(() => import("./admin/components/Main"));
+const MainExhibitPage = lazy(() => import("./Exhibit/pages/Main-Exhibit-Page/main-exhibit-page"));
+const ProductDetail = lazy(() => import("./Exhibit/pages/Product-Details-Exhibit-Page/product-details-exhibit-page"));
 
 function App() {
   return (
     <Router>
       <Suspense fallback={<div />}>
+
         <div>
           {/* <NavBar /> */}
         </div>
+        {/* <div>
+          <NavBar />
+        </div> */}
 
         <Switch>
         <Route path="/" component={MainAdmin} />
           {/* <Route path="/" exact>
             <Redirect to="/products/innovations" />
-          </Route> */}
+          </Route>
+          <Route path="/login" component={Login}/>
           <Route path="/products/:category" component={Products} />
           <Route path="/product/:id" component={ProductView} />
           <Route path="/cart" component={Cart} />
@@ -82,6 +92,8 @@ function App() {
           <Route path="/ViewStory" component={ViewStory} />
           <Route path="/contactus" component={ContactUs} exact />
           <Route path="/privacy" component={PrivacyPolicy} exact />
+          <Route path="/exhibit" component={MainExhibitPage} exact/>
+          <Route path="/exhibit/productdetail" component={ProductDetail} exact/> */}
         </Switch>
         {/* <Footer /> */}
       </Suspense>

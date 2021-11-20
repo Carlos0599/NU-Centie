@@ -14,7 +14,6 @@ router.get('/grrrr', (req, res) => {
     });
 });
 
-
 router.get('/innovdb', (req, res) => {
     pool.query(`SELECT * FROM innovators`, (err, result)=>{
         if(err) {
@@ -95,6 +94,27 @@ pool.query(`SELECT  * FROM innovators WHERE innovator_isTop = false LIMIT 3;`, (
 //         res.send(result);
 //      }
 // });
+
+
+router.get('/getInnovatorById/:id', (req,res) => {
+    pool.getConnection((err, connection) => {
+        if(err) throw err 
+        console.log(`connected as id ${connection.threadId}`);
+        //query
+        connection.query('SELECT * from innovators WHERE innovator_id = ?',[req.params.id], (err, rows) =>{
+            connection.release(); //return the connection to pool
+            
+            if(!err){
+                res.send(rows);
+            } else {
+                console.log(err);
+            }
+        });
+
+    });
+});
+
+
 
 
 module.exports = router;

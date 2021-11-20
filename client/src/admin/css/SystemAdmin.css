@@ -23,7 +23,7 @@
   #ContainerNavItem #anchorTag {
     text-decoration: none;
     color: white;
-    font-size: 20px;
+    font-size: 20Spx;
     text-align: left;
     font-family: "Nunito Sans", sans-serif;
     font-weight: bold;
@@ -80,3 +80,32 @@
   #ContainerNavItemDropDown:hover {
     background-color: #32465c;
   }
+
+  /* .modal-content {
+    width: 1200px  
+    }
+  .modal-dialog {
+    margin-left: 285px !important  
+    }
+   @media screen and (max-width: 1000px) {
+  .modal-dialog {
+     margin-left: 100px !important
+   }
+ } */
+  
+  /* .foo {
+   
+    width: 100%;
+    margin: 0 auto; */
+  
+    /* Small Devices, Tablets */
+    /* @media only screen and (min-width : 992px) {
+      width: 75%;
+     
+    } */
+    /* Medium Devices, Desktops */
+    /* @media only screen and (min-width : 992px) {
+      width: 75%;
+     
+    }
+  } */

@@ -1,9 +1,13 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Col, Nav, Row ,Card, Form, Container} from "react-bootstrap";
 import SideNavBar from './SideNavBar';
 import Chart from 'react-apexcharts'
 import  '../../css/SystemAdmin.css';
+import Chart from 'react-apexcharts';
+import  '../../css/SystemAdmin.css';
+import Axios from 'axios';
+
 
 
 function Dashboard() {
@@ -21,6 +25,36 @@ function Dashboard() {
           data: [30, 40, 35, 50, 49, 60, 70, 91, 125]
         }]
       };
+
+
+
+//  get innovators
+const [innovators, setinnovators] = useState(0);
+useEffect(() => {
+  Axios.get("http://localhost:3003/api/getInnovators")
+    .then((response) => {
+      console.log(response);
+      setinnovators(response.data.length);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+}, []);
+
+
+//  get products
+const [products, setproducts] = useState(0);
+useEffect(() => {
+  Axios.get("http://localhost:3003/api/getProducts")
+    .then((response) => {
+      console.log(response);
+      setproducts(response.data.length);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+}, []);
+
 
     return (
         <div style={{marginTop:100}}>
@@ -58,7 +92,7 @@ function Dashboard() {
                             <Card style={{width:300, height: 150, margin:'auto'}}>
                                 <p style={{margin:15, fontWeight:'bold'}}>Innovators</p>
                                 <Container style={{display:'flex', justifyContent:'center', alignItems:'center', fontSize:40, fontWeight:'bold'}}>
-                                    10
+                                  {innovators}
                                 </Container>
                             </Card>
                             </Container>
@@ -69,7 +103,7 @@ function Dashboard() {
                             <Card style={{width:300, height: 150, margin:'auto'}}>
 <p style={{margin:15, fontWeight:'bold'}}>Innovation Product</p>
 <Container style={{display:'flex', justifyContent:'center', alignItems:'center', fontSize:40, fontWeight:'bold'}}>
-                                    10
+                                    {products}
                                 </Container>
                             </Card>
                             </Container>

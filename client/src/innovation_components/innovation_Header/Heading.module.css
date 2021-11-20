@@ -1,0 +1,59 @@
+.heading {
+  background-image: url("../../assets/nu-bg.png");
+  background-repeat: no-repeat;
+  width: 100%;
+  background-size: cover;
+  flex-direction: column;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  padding: 3rem 0;
+  text-transform: uppercase;
+}
+.heading__divider {
+  width: 65%;
+  background-color: red;
+  border-bottom: 3px solid white;
+  box-shadow: 2px 2px rgb(83, 83, 83);
+  margin-bottom: 1rem;
+}
+
+.heading__label {
+  font-size: 4rem;
+  text-shadow: 0px 4px rgb(85, 85, 85);
+}
+.heading__categories {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  flex-flow: row wrap;
+}
+
+.heading__categories a {
+  text-decoration: none;
+  color: inherit;
+}
+.heading__categories > h2 {
+  font-weight: 500;
+  text-shadow: 0px 2px rgb(85, 85, 85);
+}
+
+.heading__categories_selected {
+  border-bottom: medium solid yellow;
+  box-shadow: 0px 2px rgb(85, 85, 85);
+  font-weight: 700 !important;
+}
+
+@media screen and (max-width: 800px) {
+  .heading__categories {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .heading__label {
+    font-size: 2rem;
+  }
+}

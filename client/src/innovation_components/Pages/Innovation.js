@@ -9,10 +9,10 @@ import InnovationCard from "../InnovationCard";
 import TabContext from "@material-ui/lab/TabContext";
 import TabList from "@material-ui/lab/TabList";
 import TabPanel from "@material-ui/lab/TabPanel";
-
+import Heading from "../innovation_Header/Heading";
 import { useEffect, useState } from "react";
+import { Helmet } from "react-helmet";
 import Axios from 'axios';
-
 
 
 
@@ -27,6 +27,7 @@ const useStyles = makeStyles({
     fontWeight: "bold",
   },
 });
+
 
 export default function Create() {
 
@@ -46,19 +47,24 @@ export default function Create() {
     setValue(newValue);
   };
 
+
   return (
     <>
+     <Heading/>     
+     <br></br>
+
     <div className={classes.root}>
-      <Typography variant="h4" color="primary" classes={classes.typography}>
+      {/* <Typography variant="h4" color="primary" classes={classes.typography}>
         INNOVATIONS
       </Typography>
-      <Typography>Showing {innovationSampleContent.key} result</Typography>
+      <Typography>Showing {innovationSampleContent.key} result</Typography> */}
       {/* <div style={{ backgroundColor: "#eef0ee", height: "50px", padding: 10 }}>
         </div> */}
-        <div>
 
+        <div>
           <div >
           <Grid>
+
             <TabContext value={value}>
               <TabList
                 onChange={handleChange}
@@ -71,10 +77,10 @@ export default function Create() {
                 <Tab label="Status" value="2" />
               </TabList>
               <TabPanel value="1">
-                <Grid container spacing={1}>
-                  {innovationList.map((val) => (
+                <Grid container spacing={5}>
+                  {innovationList.sort((a,b) => a.innovation_id  < b.innovation_id  ? 1 : -1).map((val) => (
                     <Grid item key={val.innovation_id} xs={12} sm={6} lg={4}>
-                      <InnovationCard innovation={val} />
+                      <InnovationCard innovation={val}/>
 
                     </Grid>
                   ))}
@@ -83,8 +89,8 @@ export default function Create() {
               
 
               <TabPanel value="2">
-                <Grid container spacing={1}>
-                  {innovationList.map((val) => (
+                <Grid container spacing={5}>
+                  {innovationList.sort((a,b) => a.innovation_status < b.innovation_status ? 1 : -1).map((val) => (
                     <Grid item key={val.innovation_id} xs={12} sm={6} lg={4}>
                       <InnovationCard innovation={val} />
                     </Grid>
@@ -95,7 +101,6 @@ export default function Create() {
             </Grid>
           </div>
         </div>
-      
     </div>
     </>
 

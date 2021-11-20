@@ -1,8 +1,8 @@
-import Create from "./Pages/Innovation";
+// import Create from "./Pages/Innovation";
 import { createMuiTheme, ThemeProvider } from "@material-ui/core";
 import Layout from "./layout";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import InnovationSecondPage from "./Pages/InnovationSecondPage";
+// import InnovationSecondPage from "./Pages/InnovationSecondPage";
 import Dashboard from "./Pages/Dashboard";
 import users from "./Pages/users";
 import productsOrders from "./Pages/productsOrders";
