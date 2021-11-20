@@ -47,7 +47,7 @@ function App() {
     <Router>
       <Suspense fallback={<div />}>
         <div>
-          <NavBar />
+          {/* <NavBar /> */}
         </div>
 
         <Switch>
@@ -83,7 +83,7 @@ function App() {
           <Route path="/contactus" component={ContactUs} exact />
           <Route path="/privacy" component={PrivacyPolicy} exact />
         </Switch>
-        <Footer />
+        {/* <Footer /> */}
       </Suspense>
     </Router>
   );
